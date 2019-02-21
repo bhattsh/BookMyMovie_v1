@@ -56,7 +56,7 @@ public class WebsiteController {
 
 		Set<String> cities = new HashSet<String>();
 
-		ResponseEntity<Screening[]> screening = template.getForEntity("http://localhost:9191/screenings",
+		ResponseEntity<Screening[]> screening = template.getForEntity("http://screening/screenings",
 				Screening[].class);
 
 		System.out.println(screening.getBody());
@@ -88,7 +88,7 @@ public class WebsiteController {
 
 		Set<Screening> allMovieShowingInACity = new HashSet<Screening>();
 
-		ResponseEntity<Screening[]> screening = template.getForEntity("http://localhost:9191/screenings",
+		ResponseEntity<Screening[]> screening = template.getForEntity("http://screening/screenings",
 				Screening[].class);
 
 		List<Screening> allScreenings = Arrays.asList(screening.getBody());
@@ -115,7 +115,7 @@ public class WebsiteController {
 		nameOfTheMovie = "";
 		screeningDatesOfAMovie.clear();
 		System.out.println(movieName);
-		Movie movie = template.getForObject("http://localhost:9292/movies/" + movieName, Movie.class);
+		Movie movie = template.getForObject("http://movieservice/movies/" + movieName, Movie.class);
 		nameOfTheMovie = movie.getMovieName();
 		for (Screening screening : allTheatres) {
 			if (screening.getMovieName().equalsIgnoreCase(movieName)) {
@@ -271,7 +271,7 @@ public class WebsiteController {
 	@RequestMapping("/registration")
 	public ModelAndView create(@ModelAttribute Profile profile, Model model) {
 		
-		template.postForEntity("http://localhost:5062/profiles", profile, null);
+		template.postForEntity("http://profile/profiles", profile, null);
 		model.addAttribute("message", "Your profile has been successfully created....!!!!");
 		return new ModelAndView("login");
 	}
@@ -280,8 +280,8 @@ public class WebsiteController {
 
 	@RequestMapping("/validateLogin")
 	public ModelAndView validateUser(@RequestParam String contactNumber, @RequestParam String password, Model model) {
-		int mobileNumber = Integer.parseInt(contactNumber);
-		ResponseEntity<Profile> profile = template.getForEntity("http://localhost:5062/profiles/profile?number=" + mobileNumber + "&password=" + password,
+		Long mobileNumber = Long.parseLong(contactNumber);
+		ResponseEntity<Profile> profile = template.getForEntity("http://profile/profiles/profile?number=" + mobileNumber + "&password=" + password,
 				Profile.class);
 		System.out.println("hello "+profile.getStatusCodeValue()+" and "+profile.getStatusCode());
 		if(profile.getBody() == null) {
@@ -301,18 +301,18 @@ public class WebsiteController {
 	public  ModelAndView bookTicket(Model model) { 
 		
 		System.out.println("booking process started");
-		
+		System.out.println("\n \n \n \n \n");
 		
 	  Booking booking = new Booking(getUniqueId(), profileId, screen.getMovieName(), screen.getTheatreName(), screen.getTheatreAddress(),
 	  screen.getDate(), screen.getStartTime(), seatTypeWithDeatial, price); 
-	
-	  ResponseEntity<Ewallet> wallet = template.getForEntity("http://localhost:5201/wallets/"+profileId, Ewallet.class);
-	  
+	  System.out.println("hellooooooo \n helloooooooooo + " +profileId);
+	  ResponseEntity<Ewallet> wallet = template.getForEntity("http://ewallet/wallets/"+profileId, Ewallet.class);
+	  System.out.println("hellooooooo \n helloooooooooo");
 	  if(wallet.getBody().getCurrentBalance() >= price) {
-		  ResponseEntity status =  template.postForEntity("http://localhost:9393/bookings/", booking, ResponseEntity.class);
+		  ResponseEntity status =  template.postForEntity("http://booking/bookings/", booking, ResponseEntity.class);
 		  System.out.println("balance to deduct from wallet is:" +price);
-		  template.put("http://localhost:5201/wallets/pay/"+wallet.getBody().getProfileId()+"?currentBalance="+price,null);
-		  
+		  template.put("http://ewallet/wallets/pay/"+wallet.getBody().getProfileId()+"?currentBalance="+price,null);
+		  System.out.println("hellooooooo \n helloooooooooo");
 	  //after payment if(status.getStatusCode().equals(HttpStatus.OK)) {
     
 	  for (int count = 0; count < seats.length; count++) {
@@ -322,7 +322,7 @@ public class WebsiteController {
 	  }
 
 	
-	  template.put("http://localhost:9191/screenings/", screen);
+	  template.put("http://screening/screenings/", screen);
 			/*
 			 * ResponseEntity<Screening> updatedScreeningEntity =
 			 * template.getForEntity("http://localhost:9191/screenings/"+screen.getId(),

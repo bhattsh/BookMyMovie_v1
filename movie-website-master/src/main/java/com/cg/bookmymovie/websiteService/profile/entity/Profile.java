@@ -5,9 +5,6 @@ import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 public class Profile {
-
-
-	
 	private int profileId;
 	private String password;
 	private String fullName;
@@ -20,17 +17,11 @@ public class Profile {
 	private LocalDate dateOfBirth;
 	private String gender;
 	private String maritalStatus;
-	private static int profileIdGenerator;
-	static {
-		profileIdGenerator = 1;
-	}
-	{
-		profileId = ++profileIdGenerator;
-	}
+	
+	
 	
 	public Profile() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public Profile(int profileId, String password, String fullName, String emailId, String contactNumber,
 			UserAddress address, LocalDate dateOfBirth, String gender, String maritalStatus) {

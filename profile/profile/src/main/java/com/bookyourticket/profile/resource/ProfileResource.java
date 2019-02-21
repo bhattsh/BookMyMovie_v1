@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,8 +43,7 @@ public class ProfileResource {
 
 	
 	@GetMapping("/profile")
-	public ResponseEntity<Profile> verifyProfile(@RequestParam Integer number, @RequestParam String password) {
-		System.out.println("hello");
+	public ResponseEntity<Profile> verifyProfile(@RequestParam Long number, @RequestParam String password) {
 		Optional<Profile> profileobject = service.getProfileByMobileNumber(number , password);
 		if (!profileobject.isPresent()) {
 			return new ResponseEntity<>(null,HttpStatus.OK);
@@ -62,7 +62,7 @@ public class ProfileResource {
 		//System.out.println(profile);
 		Profile profile1 = service.addProfile(profile);
 		profile1.getProfileId();
-		restTemplate.postForEntity("http://localhost:5201/wallets/"+profile1.getProfileId(), null, null);
+		restTemplate.postForEntity("http://ewallet/wallets/"+profile1.getProfileId(), null, null);
 		return profile1;
 	}
 

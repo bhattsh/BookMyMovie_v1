@@ -22,7 +22,7 @@ public interface ProfileService {
 
 	void updateProfile(Profile profile);
 
-	Optional<Profile> getProfileByMobileNumber(Integer number, String password);
+	Optional<Profile> getProfileByMobileNumber(Long number, String password);
 
 	//void updatePassword(Profile profile);
 

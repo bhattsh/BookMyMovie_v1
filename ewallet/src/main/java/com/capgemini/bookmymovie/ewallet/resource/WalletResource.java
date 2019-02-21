@@ -48,9 +48,10 @@ public class WalletResource {
 
 	@GetMapping("/{profileId}")
 	public ResponseEntity<Ewallet> getById(@PathVariable int profileId) {
+		System.out.println("hello getting wallet by id");
 		Ewallet wallet = service.getById(profileId);
 		if (wallet.equals(null))
-			return new ResponseEntity<Ewallet>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Ewallet>(wallet,HttpStatus.NOT_FOUND);
 		else
 			return new ResponseEntity<Ewallet>(wallet, HttpStatus.OK);
 	}

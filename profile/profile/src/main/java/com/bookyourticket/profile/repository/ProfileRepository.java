@@ -10,6 +10,6 @@ import com.bookyourticket.profile.entity.Profile;
 @Repository
 public interface ProfileRepository extends MongoRepository<Profile, Integer> {
 
-	Optional<Profile> findByContactNumberAndPassword(Integer number, String password);
+	Optional<Profile> findByContactNumberAndPassword(Long number, String password);
 
 }

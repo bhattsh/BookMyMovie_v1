@@ -2,6 +2,7 @@ package com.bookyourticket.profile.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public Profile addProfile(Profile profile) {
 		System.out.println("added"); 
+		profile.setProfileId(getUniqueId());
 		return repository.save(profile);
 	}
 
@@ -55,9 +57,15 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	@Override
-	public Optional<Profile> getProfileByMobileNumber(Integer number, String password) {
+	public Optional<Profile> getProfileByMobileNumber(Long number, String password) {
 		return repository.findByContactNumberAndPassword(number, password);
 	
 	}
 
+	
+	private Integer getUniqueId() {
+		UUID idOne = UUID.randomUUID();
+		int uid = idOne.hashCode();
+		return uid;
+	}
 }
