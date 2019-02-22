@@ -44,6 +44,7 @@ public class WebsiteController {
 	}
 
 	private List<Screening> allTheatres = new ArrayList<Screening>();
+	
 	private Set<LocalDate> screeningDatesOfAMovie = new HashSet<LocalDate>();
 	private String moviePoster = "";
 	private Screening screen; // after selecting theatre it will be available for further processing
@@ -56,13 +57,12 @@ public class WebsiteController {
 
 		Set<String> cities = new HashSet<String>();
 
-		ResponseEntity<Screening[]> screening = template.getForEntity("http://screening/screenings",
-				Screening[].class);
-
-		System.out.println(screening.getBody());
+		ResponseEntity<Screening[]> screening = template.getForEntity("http://screening/screenings", Screening[].class);
+		
 		List<Screening> allScreenings = Arrays.asList(screening.getBody());
+		
 		Set<Screening> moviesScreening = new HashSet<Screening>();
-		System.out.println(allScreenings);
+		
 		for (Screening screeningToValidate : allScreenings) {
 			moviesScreening.add(screeningToValidate);
 			String city = screeningToValidate.getTheatreAddress().getCity();
@@ -112,11 +112,14 @@ public class WebsiteController {
 
 	@RequestMapping("/getMovieDetails")
 	public ModelAndView getMovie(@RequestParam String movieName, Model model) {
+		
 		nameOfTheMovie = "";
 		screeningDatesOfAMovie.clear();
 		System.out.println(movieName);
 		Movie movie = template.getForObject("http://movieservice/movies/" + movieName, Movie.class);
+		
 		nameOfTheMovie = movie.getMovieName();
+		
 		for (Screening screening : allTheatres) {
 			if (screening.getMovieName().equalsIgnoreCase(movieName)) {
 				moviePoster = screening.getMoviePoster(); // it is required for subsequent request also
@@ -149,7 +152,6 @@ public class WebsiteController {
 	@RequestMapping("/theatreShowingMovieByDate")
 	public ModelAndView showTheatresBydate(Model model, @RequestParam String dateAsString) {
 		LocalDate date = LocalDate.parse(dateAsString);
-		System.out.println(dateAsString);
 
 		List<Screening> theatreShowingMovieOnSpecificDate = new ArrayList<Screening>();
 		for (Screening screening : allTheatres) {
@@ -216,6 +218,7 @@ public class WebsiteController {
 				if (entry.getValue().getSeatType().equals(objArray[count].toString())
 						&& entry.getValue().isAvailable() == true)
 					seatsAvailable++;
+				
 				price = entry.getValue().getPrice();
 			}
 			seatTypes.put(objArray[count].toString(), seatsAvailable);
@@ -300,19 +303,16 @@ public class WebsiteController {
 	@RequestMapping(value="/BookTicket") 
 	public  ModelAndView bookTicket(Model model) { 
 		
-		System.out.println("booking process started");
-		System.out.println("\n \n \n \n \n");
-		
+	
 	  Booking booking = new Booking(getUniqueId(), profileId, screen.getMovieName(), screen.getTheatreName(), screen.getTheatreAddress(),
 	  screen.getDate(), screen.getStartTime(), seatTypeWithDeatial, price); 
-	  System.out.println("hellooooooo \n helloooooooooo + " +profileId);
+	  
 	  ResponseEntity<Ewallet> wallet = template.getForEntity("http://ewallet/wallets/"+profileId, Ewallet.class);
-	  System.out.println("hellooooooo \n helloooooooooo");
+	 
 	  if(wallet.getBody().getCurrentBalance() >= price) {
 		  ResponseEntity status =  template.postForEntity("http://booking/bookings/", booking, ResponseEntity.class);
-		  System.out.println("balance to deduct from wallet is:" +price);
+		
 		  template.put("http://ewallet/wallets/pay/"+wallet.getBody().getProfileId()+"?currentBalance="+price,null);
-		  System.out.println("hellooooooo \n helloooooooooo");
 	  //after payment if(status.getStatusCode().equals(HttpStatus.OK)) {
     
 	  for (int count = 0; count < seats.length; count++) {
